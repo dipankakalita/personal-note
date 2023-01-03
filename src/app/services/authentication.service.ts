@@ -19,7 +19,8 @@ export class AuthenticationService {
       .createUserWithEmailAndPassword(email, password)
       .then((result) => {
         window.alert('You have been successfully registered!');
-        console.log(result.user);
+        this.cookieService.set('userID', result.user?.uid!,1,undefined,undefined,true,'Strict');
+        this.cookieService.set('userName', result.user?.email!,1,undefined,undefined,true,'Strict');
         this.router.navigateByUrl("");
       })
       .catch((error) => {
@@ -33,6 +34,7 @@ export class AuthenticationService {
       .then((result) => {
         console.log(result.user?.uid!);
         this.cookieService.set('userID', result.user?.uid!,1,undefined,undefined,true,'Strict');
+        this.cookieService.set('userName', result.user?.email!,1,undefined,undefined,true,'Strict');
         // this.router.navigateByUrl("/dashboard");
       })
       .catch((error) => {
@@ -51,6 +53,7 @@ export class AuthenticationService {
       .then((result) => {
         console.log('You have been successfully logged in!');
         this.cookieService.set('userID', result.user?.uid!,1,undefined,undefined,true,'Strict');
+        this.cookieService.set('userName', result.user?.email!,1,undefined,undefined,true,'Strict');
         // this.router.navigateByUrl("/dashboard");
       })
       .catch((error) => {

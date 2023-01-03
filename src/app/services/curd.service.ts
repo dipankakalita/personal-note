@@ -18,8 +18,8 @@ export class CurdService {
       return this.firestore.collection(collection).add(data);
     }
 
-    getDataByColumnName(collectionName:string, columnName:string, data:string):any { 
-      const db = this.firestore.collection(collectionName,query=>query.where(columnName,"==",data)).snapshotChanges();
+    getDataByColumnName(collectionName:string, columnName:string, operator:any, data:string):any { 
+      const db = this.firestore.collection(collectionName,query=>query.where(columnName,operator,data)).snapshotChanges();
       return db;
     }
 

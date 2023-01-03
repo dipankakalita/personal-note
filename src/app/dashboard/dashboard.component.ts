@@ -17,6 +17,7 @@ export class DashboardComponent {
   formBtn:string = '';
   currentID:string = '';
   allNote:any[] = [];
+  allShared:any[] = [];
   noteForm:any = this.fb.group(
     {
       note: ['',[Validators.required]]
@@ -47,11 +48,10 @@ export class DashboardComponent {
   addNote():void{
     if(this.noteForm.valid) {
       this.noteForm.value['userID'] = this.cookieService.get('userID');
-      console.log(this.noteForm.value);
       if(this.modelTitle == "Update Note"){
         this.curdService.updateDataById("notes",this.currentID,this.noteForm.value)
         .then((res:any) => {
-          alert("Note updated successfully");
+          // alert("Note updated successfully");
           this.noteForm.reset();
           this.modalService.dismissAll();
         });
@@ -59,7 +59,7 @@ export class DashboardComponent {
       else{
         this.curdService.insert("notes",this.noteForm.value)
         .then((res:any) => {
-          alert("Note added successfully");
+          // alert("Note added successfully");
           this.noteForm.reset();
           this.modalService.dismissAll();
         })
@@ -69,28 +69,86 @@ export class DashboardComponent {
   }
 
   fetchNotes():void{
-    // this.allNote = [];
-    const api = this.curdService.getDataByColumnName("notes", "userID", this.cookieService.get('userID'));
+    console.log("0");
+    const api = this.curdService.getDataByColumnName("notes", "userID","==", this.cookieService.get('userID'));
     api.subscribe((dbInfo:any)=>{
       this.allNote = [];
+      console.log("1");
       dbInfo.map((res:any)=>{
+        console.log("2");
         let record = res.payload.doc.data();
         record['id'] = res.payload.doc.id;
-        console.log(record);
+        record['shared'] = false;
         this.allNote.push(record);
       })
-      console.log(this.allNote);
+      console.log("3");
     })
+    console.log("33");
+    // shared data
+    const sharedapi = this.curdService.getDataByColumnName("shared", "userID","!=", this.cookieService.get('userID'));
+      sharedapi.subscribe((dbInfos:any)=>{
+        this.allShared = [];
+        console.log("4");
+        dbInfos.map((response:any)=>{
+          let sharedRecord = response.payload.doc.data();
+          sharedRecord['shared'] = true;
+          this.allShared.push(sharedRecord);
+        })
+        console.log("5");
+      })
+      console.log(this.allNote);
+      console.log(this.allShared);
   }
 
   deleteRecord(id:string){
     this.curdService.deleteDataById("notes",id)
         .then((res:any) => {
-          alert("Note deleted successfully");
+          // alert("Note deleted successfully");
       });
   }
 
   logout():void{
     this.authService.logout();
+  }
+
+  shareRecord(note:any):void{
+    if(note.isShared){
+      let newData = {
+        "note": note.note,
+        "userID": note.userID,
+        "isShared":false,
+        "sharedId":""
+      };
+      
+      this.curdService.updateDataById("notes",note.id,newData)
+      .then((res:any) => {
+        note['userName'] = this.cookieService.get('userName');
+        console.log(note);
+        console.log(note.sharedId);
+        
+        this.curdService.deleteDataById("shared",note.sharedId)
+          .then((res:any) => {
+            // alert("Share Stoped successfully");
+        });
+      });
+    }
+    else{
+      note['userName'] = this.cookieService.get('userName');
+        this.curdService.insert("shared",note)
+            .then((res:any) => {
+              console.log(res);
+              let newData = {
+                "note": note.note,
+                "userID": note.userID,
+                "isShared":true,
+                "sharedId":res.id
+              }
+              this.curdService.updateDataById("notes",note.id,newData)
+              .then((res:any) => {
+                // alert("Shared successfully");
+              });
+        })
+      ;
+    }
   }
 }
