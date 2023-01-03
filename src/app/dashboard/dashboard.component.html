@@ -1,0 +1,47 @@
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center my-5">
+      <h2 class="">Your Personal Notes</h2>
+      <div>
+        <button class="btn btn-primary mx-3" (click)="openNote(content,'Add New Note',null)">Add New Note</button>
+        <button class="btn btn-danger" (click)="logout()">LOGOUT</button>        
+      </div>
+    </div>           
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th>Sl. No</th>
+          <th>Notes</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let note of allNote; index as i">
+          <td class="text-center">{{i+1}}</td>
+          <td>{{note.note}}</td>
+          <th class="d-flex justify-content-around">
+            <button class="btn btn-warning" (click)="openNote(content,'Update Note',note)">Edit</button>
+            <button class="btn btn-danger" (click)="deleteRecord(note.id)">Delete</button>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title" id="modal-basic-title">{{modelTitle}}</h6>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body d-flex justify-content-center">
+      <form class="w-100" (submit)="addNote()" [formGroup]="noteForm">
+        <div class="mb-3">
+          <label for="note" class="form-label">Enter Note Here</label>
+          <textarea id="note" placeholder="Text" [formControl]="note" rows="5" class="w-100"></textarea>
+          <small class="p-invalid" style="color:red" *ngIf="note.hasError('required') && note.touched">This field is required!</small>
+        </div>
+        <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-primary w-100 mb-2 rounded-0">{{formBtn}}</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

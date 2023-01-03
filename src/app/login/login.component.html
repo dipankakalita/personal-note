@@ -1,0 +1,25 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="w-50 shadow d-flex flex-column align-items-center p-4">
+        <img src="https://blog.vantagecircle.com/content/images/2020/02/vc-logo-new.png" width="50%" class="mb-4">
+        <h3 class="">Sign In</h3>
+        <form class="w-75" (submit)="login()" [formGroup]="loginForm">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email"  formControlName="email">
+              <small class="p-invalid" style="color:red" *ngIf="email.hasError('required') && email.touched">This field is required!</small>
+              <!-- <small class="p-invalid" style="color:red" *ngIf="phone.hasError('required') && phone.touched">This field is required!</small> -->
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" formControlName="password">
+              <small class="p-invalid" style="color:red" *ngIf="password.hasError('required') && password.touched">This field is required!</small>
+            </div>
+            <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-primary w-100 mb-2 rounded-0">LOGIN</button>
+            </div>
+          </form>
+          <p>or</p>
+          <button type="button" (click)="googleAuth()" class="btn btn-google w-75 mb-2">Login with Google</button>
+          <p class="form-text">Don't have an account! <a routerLink="register">Register Now</a></p>
+    </div>
+</div>
